@@ -1,4 +1,4 @@
-const baseUrl = "https://running-dashboard.herokuapp.com/"
+const baseUrl = "https://running-dashboard.herokuapp.com"
 
 function create_svg(data, column, select_id) {
 	if (column === "speed") {
