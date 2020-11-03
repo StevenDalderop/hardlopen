@@ -1,3 +1,5 @@
+const baseUrl = "https://running-dashboard.herokuapp.com/"
+
 var maanden = {"1": "jan", "2": "feb", "3": "mar", "4": "apr", "7": "juli", "10": "okt"}
 
 function sumDistance(total, num) {
@@ -185,7 +187,7 @@ class Sessions_container extends React.Component {
     }
 
     componentDidMount() {
-        fetch("http://127.0.0.1:8000/app/api/sessions/")
+        fetch(`${baseUrl}/app/api/sessions/`)
             .then(res=> res.json())
             .then(data => {
                 console.log(data)
@@ -204,7 +206,7 @@ class Sessions_container extends React.Component {
 				}
             })
 					
-		fetch("http://127.0.0.1:8000/app/api/laps/")
+		fetch(`${baseUrl}/app/api/laps/`)
             .then(res=> res.json())
             .then(data => {       
 				data.forEach(x => x.timestamp = new Date(Date.parse(x.timestamp))) 
