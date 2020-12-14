@@ -21,10 +21,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get("secret_key")
+SECRET_KEY = os.getenv("secret_key")
+if not SECRET_KEY:
+    with open(os.path.join(BASE_DIR.parent, "credentials/secret_key.txt")) as f:
+        lines = f.readlines()
+        SECRET_KEY = lines[0]
+        password = lines[1]
+        host = lines[2]
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = os.getenv("debug", False)
 
 DEBUG_PROPAGATE_EXCEPTIONS = True
 
@@ -89,8 +95,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'postgres',
         'USER': 'postgres',
-        'PASSWORD': os.environ.get("password"),
-        'HOST': os.environ.get("host"),
+        'PASSWORD': os.environ.get("password", password),
+        'HOST': os.environ.get("host", host),
         'PORT': '5432',
     },
 }  

@@ -1,4 +1,4 @@
-const baseUrl = "https://running-dashboard.herokuapp.com"
+const baseUrl = window.location.protocol + "//" +window.location.host
 
 var maanden = {"1": "jan", "2": "feb", "3": "mar", "4": "apr", "7": "juli", "10": "okt"}
 
@@ -187,7 +187,7 @@ class Sessions_container extends React.Component {
     }
 
     componentDidMount() {
-        fetch(`${baseUrl}/app/api/sessions/`)
+        fetch(`${baseUrl}/api/sessions/`)
             .then(res=> res.json())
             .then(data => {
                 console.log(data)
@@ -206,7 +206,7 @@ class Sessions_container extends React.Component {
 				}
             })
 					
-		fetch(`${baseUrl}/app/api/laps/`)
+		fetch(`${baseUrl}/api/laps/`)
             .then(res=> res.json())
             .then(data => {       
 				data.forEach(x => x.timestamp = new Date(Date.parse(x.timestamp))) 
