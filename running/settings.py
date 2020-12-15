@@ -32,10 +32,15 @@ else:
     password = None
     host = None
 
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("debug", False)
 
 DEBUG_PROPAGATE_EXCEPTIONS = True
+
+SECURE_SSL_REDIRECT = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
 
 ALLOWED_HOSTS = ["127.0.0.1", "localhost", "running-dashboard.herokuapp.com"]
 
@@ -171,3 +176,6 @@ LOGGING = {
 
 # Activate Django-Heroku.
 django_heroku.settings(locals())
+
+if os.environ.get('DJANGO_DEVELOPMENT'):
+    from running.settings_dev import * 
