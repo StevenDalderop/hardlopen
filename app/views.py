@@ -29,22 +29,26 @@ def login_view(request):
     else:
         return render(request, "app/login.html")
 
+@login_required
 def logout_view(request):
     logout(request)
     return render(request, "app/login.html", {"message": "Logged out."})
-    
+
+@login_required
 def record(request, id):
     try:
         Session.objects.get(pk=id)
     except Session.DoesNotExist:
         raise Http404("Session does not exist")
     return render(request, "app/record.html", {"id": id})
- 
+
+@login_required
 def api_session_lap(request, id):
     laps = Lap.objects.filter(session_index=id)
     serializer = LapSerializer(laps, many=True, context={'request': Request(request)})
     return JsonResponse(serializer.data, safe=False)
-    
+
+@login_required   
 def api_session_record(request, id):
     records = Record.objects.filter(session_index=id).order_by('timestamp')
     serializer = RecordSerializer(records, many=True, context={'request': Request(request)})

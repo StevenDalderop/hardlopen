@@ -177,5 +177,7 @@ LOGGING = {
 # Activate Django-Heroku.
 django_heroku.settings(locals())
 
+LOGIN_URL = 'login'
+
 if os.environ.get('DJANGO_DEVELOPMENT'):
     from running.settings_dev import * 
