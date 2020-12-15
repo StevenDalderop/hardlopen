@@ -28,6 +28,9 @@ if not SECRET_KEY:
         SECRET_KEY = lines[0]
         password = lines[1]
         host = lines[2]
+else: 
+    password = None
+    host = None
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("debug", False)

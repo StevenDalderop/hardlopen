@@ -1,3 +1,7 @@
+body {
+	height: 100vh;
+}
+
 .session-box {
     width: 30%;
     background-color: red;
@@ -115,6 +119,23 @@ th {
 		font-size: 12px;
 	}
 }
-		
+
+.animation {
+	background: linear-gradient(237deg, #f2ed07, #142fc6);
+	background-size: 400% 400%;
+	animation: gradient 25s ease infinite;
+}
+
+@keyframes gradient {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}	
 	
 
