@@ -1,3 +1,7 @@
+body {
+	height: 100vh;
+}
+
 .session-box {
     width: 30%;
     background-color: red;
@@ -115,6 +119,75 @@ th {
 		font-size: 12px;
 	}
 }
-		
-	
 
+.animation {
+	background: linear-gradient(237deg, #f2ed07, #142fc6);
+	background-size: 400% 400%;
+	animation: gradient 25s ease infinite;
+}
+
+@keyframes gradient {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}	
+
+#buttons-group {
+	display: flex;
+	justify-content: center;
+	justify-items: center;
+}
+
+.content {
+	margin-left: 30px;
+}
+
+.flex {
+	display: flex;
+}
+
+.bg_red {
+	background-color: red;
+}
+
+.bg_green {
+	background-color: green;
+}
+
+#bar {
+	position: relative;
+	background-color: gray;
+	height: 50px;
+}
+
+#progress {
+	position: absolute;
+	background-color: green;
+	height: 50px;
+	min-width: 1%;
+	left: 0px;
+	top: 0px;
+}
+
+.front {
+	z-index: 1000;
+	position: absolute;
+	margin-left: 30px;
+}
+
+#trainings {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	padding: 5px;
+}
+
+.training {
+	margin: 5px;
+}

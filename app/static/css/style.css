@@ -17,12 +17,16 @@ body {
 	grid-row-gap: 15px;
 	padding: 15px;
 	padding-top: 0px;
-	height: 800px;
 	width: 100%;
 	grid-template-areas: 
 		"map session"
 		"svg1 lap"
 		"svg2 svg2";
+}
+
+#content {
+	padding-top: 75px;
+	min-height: 100vh;
 }
 
 #lap_container {
@@ -52,10 +56,6 @@ body {
 	max-height: 400px;
 }
 
-#react_container {
-	margin-top: 75px;
-}
-
 #login_form, #register_form {
 	display: flex;
     flex-direction: column;
@@ -72,7 +72,7 @@ body {
 	color: white;
 }
 
-#table_container {
+.table_container {
 	height: 400px;
 	overflow: auto;
 }
@@ -137,5 +137,99 @@ th {
 		background-position: 0% 50%;
 	}
 }	
-	
 
+#buttons-group {
+	display: flex;
+	justify-content: center;
+	justify-items: center;
+	margin-bottom: 15px;
+}
+
+.content {
+	margin-left: 30px;
+}
+
+.flex {
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.bg_no_success_dark {
+	background-color: green;
+	opacity: 0.5;
+}
+
+.bg_no_success {
+	background-color: rgb(195, 240, 153);
+}
+
+.bg_success {
+	background-color: green;
+}
+
+#bar {
+	position: relative;
+	height: 50px;
+}
+
+#progress {
+	position: absolute;
+	height: 50px;
+	min-width: 1%;
+	left: 0px;
+	top: 0px;
+}
+
+#no_progress {
+	position: absolute;
+	height: 50px;
+}
+
+.front {
+	z-index: 1000;
+	position: absolute;
+	width: 100%;
+	text-align: center;
+	top: 50%;
+	transform: translateY(-50%);
+}
+
+#trainings {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	margin-top: 15px;
+}
+
+.dark {
+	background-color: rgb(50,50,50);
+	color: white;
+}
+
+.light {
+	background-color: white;
+	color: black;
+}
+
+#div_buttons {
+	display: inline-block;
+}
+
+.center {
+	align: center;
+}
+
+.training_div {
+	margin: 10px;
+	padding: 10px;
+	border-radius: 10px;
+}
+
+.text-left {
+	text-align: left;
+}
+
+.text-center {
+	text-align: center;
+}
+	

@@ -87,4 +87,20 @@ class Record(models.Model):
     class Meta:
         db_table = 'record'
 
+class Matches(models.Model):
+    index = models.BigIntegerField(blank=True, primary_key=True)
+    date = models.DateField(blank=True, null=True)
+    distance = models.FloatField(blank=True, null=True)
+    time = models.TextField(blank=True, null=True)
+    name = models.TextField(blank=True, null=True)
+    isRecord = models.BooleanField(default=False)
+    
+    class Meta: 
+        db_table = 'match'
+    
+class Training(models.Model):
+    index = models.AutoField(primary_key=True)
+    training_id = models.IntegerField(blank=True, null=True, unique=True)
 
+    class Meta: 
+        db_table = 'training'    

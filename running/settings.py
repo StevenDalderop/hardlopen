@@ -25,9 +25,9 @@ SECRET_KEY = os.getenv("secret_key")
 if not SECRET_KEY:
     with open(os.path.join(BASE_DIR.parent, "credentials/secret_key.txt")) as f:
         lines = f.readlines()
-        SECRET_KEY = lines[0]
-        password = lines[1]
-        host = lines[2]
+        SECRET_KEY = lines[0].strip()
+        password = lines[1].strip()
+        host = lines[2].strip()
 else: 
     password = None
     host = None
@@ -48,7 +48,9 @@ ALLOWED_HOSTS = ["127.0.0.1", "localhost", "running-dashboard.herokuapp.com"]
 
 INSTALLED_APPS = [
     'app',
+    'api',
     'rest_framework',
+    'webpack_loader',
     'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -75,7 +77,7 @@ ROOT_URLCONF = 'running.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -88,6 +90,13 @@ TEMPLATES = [
     },
 ]
 
+WEBPACK_LOADER = {
+    'DEFAULT': {
+        'BUNDLE_DIR_NAME': 'dist/',
+        'STATS_FILE': os.path.join(BASE_DIR, 'webpack-stats.json'),
+    }
+}
+
 WSGI_APPLICATION = 'running.wsgi.application'
 
 
@@ -95,10 +104,6 @@ WSGI_APPLICATION = 'running.wsgi.application'
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
 DATABASES = {
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.sqlite3',
-    #     'NAME': BASE_DIR / 'db.sqlite3',
-    # },
     'default': { 
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'postgres',
@@ -151,6 +156,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 REST_FRAMEWORK = {

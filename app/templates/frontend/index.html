@@ -1,0 +1,10 @@
+{% extends "frontend/base.html" %}
+
+{% block scripts %}
+	<script src = "https://d3js.org/d3.v5.min.js"></script>
+{% endblock %}
+
+{% block script_end %}
+	{% load static %}
+	<script type="text/javascript" src="{% static 'app/index.js' %}"></script> 
+{% endblock %}

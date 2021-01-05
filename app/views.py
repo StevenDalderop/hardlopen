@@ -1,20 +1,16 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, Http404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from django.urls import reverse
+from app.models import Session
 from django.contrib.auth.models import User
-from rest_framework import viewsets, permissions
-from app.serializers import SessionSerializer, RecordSerializer, LapSerializer
-from app.models import Session, Record, Lap
-from rest_framework.request import Request
 
 # Create your views here. 
 def index(request):
     if not request.user.is_authenticated:
-        return render(request, "app/login.html", {"message": None})
+        return render(request, "frontend/login.html", {"message": None})
     else: 
-        return render(request, "app/index.html")
+        return render(request, "frontend/index.html")
 
 def login_view(request):
     if request.method == "POST":
@@ -25,14 +21,18 @@ def login_view(request):
             login(request, user)
             return HttpResponseRedirect(reverse("index"))
         else:
-            return render(request, "app/login.html", {"message": "Invalid credentials."})
+            return render(request, "frontend/login.html", {"message": "Invalid credentials."})
     else:
-        return render(request, "app/login.html")
+        return render(request, "frontend/login.html")      
+
+@login_required
+def match(request):
+    return render(request, "frontend/matches.html")
 
 @login_required
 def logout_view(request):
     logout(request)
-    return render(request, "app/login.html", {"message": "Logged out."})
+    return render(request, "frontend/login.html", {"message": "Logged out."})
 
 @login_required
 def record(request, id):
@@ -40,32 +40,10 @@ def record(request, id):
         Session.objects.get(pk=id)
     except Session.DoesNotExist:
         raise Http404("Session does not exist")
-    return render(request, "app/record.html", {"id": id})
+    return render(request, "frontend/record.html", {"id": id})
 
 @login_required
-def api_session_lap(request, id):
-    laps = Lap.objects.filter(session_index=id)
-    serializer = LapSerializer(laps, many=True, context={'request': Request(request)})
-    return JsonResponse(serializer.data, safe=False)
+def schema(request):
+    return render(request, "frontend/schema.html")
+ 
 
-@login_required   
-def api_session_record(request, id):
-    records = Record.objects.filter(session_index=id).order_by('timestamp')
-    serializer = RecordSerializer(records, many=True, context={'request': Request(request)})
-    return JsonResponse(serializer.data, safe=False)
-
-class SessionViewSet(viewsets.ModelViewSet):
-    queryset = Session.objects.all().order_by('-timestamp')
-    serializer_class = SessionSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-class RecordViewSet(viewsets.ModelViewSet):
-    queryset = Record.objects.all().order_by('-timestamp')
-    serializer_class = RecordSerializer
-    permission_classes = [permissions.IsAuthenticated]
-    
-class LapViewSet(viewsets.ModelViewSet):
-    queryset = Lap.objects.all().order_by('-timestamp')
-    serializer_class = LapSerializer
-    permission_classes = [permissions.IsAuthenticated]
-    paginator = None

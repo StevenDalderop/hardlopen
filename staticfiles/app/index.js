@@ -1,3 +1,5 @@
+const baseUrl = window.location.protocol + "//" +window.location.host
+
 var maanden = {"1": "jan", "2": "feb", "3": "mar", "4": "apr", "7": "juli", "10": "okt"}
 
 function sumDistance(total, num) {
@@ -122,7 +124,7 @@ function bar_plot(data_input, id_name, timeframe, width, height) {
 
 Number.prototype.padLeft = function(base,chr){
     var  len = (String(base || 10).length - String(this).length)+1;
-    return len > 0? new Array(len).join(chr || '0')+this : this;
+    return len > 0 ? new Array(len).join(chr || '0')+this : this;
 }
 
 function getFormattedDate(date) {
@@ -185,10 +187,9 @@ class Sessions_container extends React.Component {
     }
 
     componentDidMount() {
-        fetch("http://127.0.0.1:8000/app/api/sessions/")
+        fetch(`${baseUrl}/api/sessions/`)
             .then(res=> res.json())
             .then(data => {
-                console.log(data)
                 this.setState({"data_sessions": data.results, "next_page": data.next});
 				let table = document.querySelector("#table_container")
 				const self = this
@@ -197,18 +198,16 @@ class Sessions_container extends React.Component {
 						fetch(self.state.next_page)
 							.then(res=> res.json())
 							.then(data => {
-								console.log(data)
 								this.setState((state) => {return ({"data_sessions": state.data_sessions.concat(data.results), "next_page": data.next})});
 							})
 					}
 				}
             })
 					
-		fetch("http://127.0.0.1:8000/app/api/laps/")
+		fetch(`${baseUrl}/api/laps/`)
             .then(res=> res.json())
             .then(data => {       
 				data.forEach(x => x.timestamp = new Date(Date.parse(x.timestamp))) 
-				console.log(data)
                 this.setState({"data_laps": data});
 				bar_plot(data, "#svg_year", "year", 400, 400)
 				bar_plot(data, "#svg_month", "month", 400, 400)

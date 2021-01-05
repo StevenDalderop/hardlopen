@@ -1,4 +1,4 @@
-from app.models import Session, Record, Lap
+from app.models import Session, Record, Lap, Matches, Training
 from rest_framework import serializers
 
 class SessionSerializer(serializers.HyperlinkedModelSerializer):
@@ -22,3 +22,12 @@ class LapSerializer(serializers.HyperlinkedModelSerializer):
         model = Lap
         fields = ['url', 'timestamp', 'total_elapsed_time', 'total_distance', 'avg_speed']
         
+class MatchSerializer(serializers.HyperlinkedModelSerializer):  
+    class Meta:
+        model = Matches
+        fields = '__all__'
+
+class TrainingSerializer(serializers.ModelSerializer):    
+    class Meta:
+        model = Training
+        fields = '__all__'

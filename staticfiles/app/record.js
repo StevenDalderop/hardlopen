@@ -1,3 +1,5 @@
+const baseUrl = window.location.protocol + "//" +window.location.host
+
 function create_svg(data, column, select_id) {
 	if (column === "speed") {
 		var data2 = data.map(z => {return {"x": new Date(Date.parse(z.timestamp)), "y": z.speed}})
@@ -124,20 +126,20 @@ class Container extends React.Component {
 
     componentDidMount() {
 		
-        axios.get(`http://127.0.0.1:8000/app/api/sessions/${id}/laps`, {cancelToken: this.axiosCancelSource.token})
+        axios.get(`${baseUrl}/api/sessions/${id}/laps`, {cancelToken: this.axiosCancelSource.token})
             .then(res => {
                 this.setState({"data_laps": res.data});
             })
 			.catch(err => console.log(err))
 			
-		axios.get(`http://127.0.0.1:8000/app/api/sessions/${id}`, {cancelToken: this.axiosCancelSource.token})
+		axios.get(`${baseUrl}/api/sessions/${id}`, {cancelToken: this.axiosCancelSource.token})
             .then(res => {
                 this.setState({"data_session": res.data});
             })
 			.catch(err => console.log(err))
 		
 		
-		axios.get(`http://127.0.0.1:8000/app/api/sessions/${id}/records`, {cancelToken: this.axiosCancelSource.token})
+		axios.get(`${baseUrl}/api/sessions/${id}/records`, {cancelToken: this.axiosCancelSource.token})
             .then(res => {
                 this.setState({"data_records": res.data});
 				
