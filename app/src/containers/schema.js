@@ -2,6 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Navbar from '../components/navbar';
 import Training from '../components/training';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap'
 
 const baseUrl = window.location.protocol + "//" +window.location.host
 
@@ -39,8 +41,8 @@ class App extends React.Component {
 			.then(data => this.setState({"checked": data}))
 	}
 	
-	handleCheckBox(e, id) {
-		if (e.target.checked) this.setState(state => ({"checked": [...state.checked, {"training_id": id}]}))
+	handleChangeTraining(id, isChecked) {
+		if (!isChecked) this.setState(state => ({"checked": [...state.checked, {"training_id": id}]}))
 		else { 
 			this.setState(state => {
 				var checked = state.checked.filter((x) => x.training_id !== id)				
@@ -49,21 +51,16 @@ class App extends React.Component {
 		}
 	}
 	
-
-	
-
-	
-	
 	renderTraining(id, training) {
 		return(
-			< Training id={id} checked={this.state.checked} handleCheckBox= {(e,id) => this.handleCheckBox(e,id)} 
+			< Training id={id} checked={this.state.checked} handleChangeTraining={(id,isChecked) => this.handleChangeTraining(id, isChecked)} 
 				training_number={id % 3 ? id % 3 : 3} training={training} theme={this.state.theme} />
 		)
 	}
 	
 	renderWeekTraining(week, trainings) {
 		return (
-			<div className="text-center">
+			<div className="training-week">
 				<h3> Week {week} </h3>
 				<div className="text-left">
 					{ this.renderTraining(3 * week - 2, trainings[0]) } 

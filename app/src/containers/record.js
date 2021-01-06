@@ -2,6 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Navbar from '../components/navbar';
 import Table from '../components/table';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap'
 
 const baseUrl = window.location.protocol + "//" +window.location.host
 

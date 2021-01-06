@@ -1,7 +1,11 @@
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Navbar from '../components/navbar';
 import Table from '../components/table';
+import 'bootstrap';
+
 
 const baseUrl = window.location.protocol + "//" +window.location.host
 
@@ -107,7 +111,7 @@ class App extends React.Component {
 			<div id="content" className="center">
 				<div id="buttons-group">
 					<div className="dropdown">
-					  <button className={btn_className} type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					  <button className={btn_className} type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 						{ name }
 					  </button>
 					  <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -119,7 +123,7 @@ class App extends React.Component {
 						<a className="dropdown-item" href="#" onClick={() => this.setState({"filtered": "21.1 KM", "search": ""})}>21.1 KM</a>
 					  </div>
 					</div>
-					<form className="form-inline my-2 my-lg-0 ml-3">
+					<form className="form-inline my-lg-0 mx-3">
 					  <input className="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" value={this.state.search} onChange={this.handleChange}></input>
 					</form>
 				</div>

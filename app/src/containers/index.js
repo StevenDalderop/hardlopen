@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom';
 import Navbar from '../components/navbar';
 import Table from '../components/table';
 import Bar_plot from '../components/barplot';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap'
 
 const baseUrl = window.location.protocol + "//" +window.location.host
 
@@ -127,7 +129,7 @@ class App extends React.Component {
         return (
 			<div className={this.state.theme}>
 				<Navbar theme={this.state.theme} onChange={(e) => this.handleChange(e)} />
-				<div id="content" className="center">
+				<div id="content">
 					<div id="div_buttons" className="btn-group mb-3" role="group" aria-label="Basic example">
 					  <button type="button" className={btn_year_className} onClick={() => this.setState({"show_graph": "year"})}>Year</button>
 					  <button type="button" className={btn_month_className} onClick={() => this.setState({"show_graph": "month"})}>Month</button>
@@ -138,47 +140,69 @@ class App extends React.Component {
 						timeframe={this.state.show_graph} width={400} height={400} /> : null}
 					{ this.state.show_bar_plot && this.state.show_graph === "month" ? < Bar_plot data_input={this.state.data_laps} id_name={"svg_" + this.state.show_graph} 
 						timeframe={this.state.show_graph} width={400} height={400} /> : null}
-						
-					<div>
-						<h3 onClick={(e) => this.show("tips")}> Tips </h3>
-						<ul id="tips" style={{"display": this.state.show.includes("tips") ? "block": "none"}}>
-							<li> Goed inlopen (~2km) en uitlopen (~1km) </li>
-							<li> Halveer trainingen voor wedstrijd </li>
-							<li> 1 training op bospad / helling, goed voor techniek en kracht </li>
-							<li> Probeer ongeveer 180 passen per minuut aan te houden </li>
-							<li> Af en toe korte versnelling van 50 a 200m </li>
-							<li> Wisselduurloop rustig uitbouwen met 5 a 10 % per week </li>
-						</ul>		
-					</div>
-					<div>
-						<h3 onClick={(e) => this.show("tempos")}> Tempos </h3>
-						<p id="tempos" style={{"display": this.state.show.includes("tempos") ? "block": "none"}}>
-							De volgde tempotijden kun je ongeveer aanhouden afhankelijk van het aantal tempo’s en de 
-							arbeid/rust verhouding en de vorm van de dag (gevoel). <br></br>
+					
+					<div class="container">
+					<div class="accordion mb-3 bg-light" id="accordionExample">
+					  <div class="accordion-item">
+						<h2 class="accordion-header" id="headingOne">
+						  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+							Tips
+						  </button>
+						</h2>
+						<div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+						  <div class="accordion-body">
+							<div class="color-black">
+								<ul>
+									<li> Goed inlopen (~2km) en uitlopen (~1km) </li>
+									<li> Halveer trainingen voor wedstrijd </li>
+									<li> 1 training op bospad / helling, goed voor techniek en kracht </li>
+									<li> Probeer ongeveer 180 passen per minuut aan te houden </li>
+									<li> Af en toe korte versnelling van 50 a 200m </li>
+									<li> Wisselduurloop rustig uitbouwen met 5 a 10 % per week </li>
+								</ul>		
+							</div>
+						  </div>
+						</div>
+					  </div>
+					  <div class="accordion-item">
+						<h2 class="accordion-header" id="headingTwo">
+						  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+							Tempos
+						  </button>
+						</h2>
+						<div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+						  <div class="accordion-body">
+							 <p class="color-black">
+								De volgde tempotijden kun je ongeveer aanhouden afhankelijk van het aantal tempo’s en de 
+								arbeid/rust verhouding en de vorm van de dag (gevoel). <br></br>
 
-							2000 meter tempo’s :  10km wedstrijdtempo + 10 á 30 sec <br></br>
+								2000 meter tempo’s :  10km wedstrijdtempo + 10 á 30 sec <br></br>
 
-							1000 meter tempo’s : 10 km wedstrijdtempo + 0 á 15 sec <br></br>
+								1000 meter tempo’s : 10 km wedstrijdtempo + 0 á 15 sec <br></br>
 
-							800m tempo’s: 10 km wedstrijdtempo -2 á  +10 sec <br></br>
+								800m tempo’s: 10 km wedstrijdtempo -2 á  +10 sec <br></br>
 
-							600m tempo’s: 10 km wedstrijdtempo  -5 á +5 sec <br></br>
+								600m tempo’s: 10 km wedstrijdtempo  -5 á +5 sec <br></br>
 
-							400 m tempo’s: 10 km wedstrijdtempo  - 1 á - 10sec <br></br>
+								400 m tempo’s: 10 km wedstrijdtempo  - 1 á - 10sec <br></br>
 
-							200m tempo’s: Hier is een trucje voor. Neem je 10 km tijd in minuten en maak 
-							daar seconden van. Bv 45 minuten op 10 km wordt 45 sec op 200 m met een marge 
-							van 2 sec meer of minder. <br></br>
+								200m tempo’s: Hier is een trucje voor. Neem je 10 km tijd in minuten en maak 
+								daar seconden van. Bv 45 minuten op 10 km wordt 45 sec op 200 m met een marge 
+								van 2 sec meer of minder. <br></br>
 
-							100 m tempo’s: iets harder dan de 200m <br></br>
+								100 m tempo’s: iets harder dan de 200m <br></br>
 
-							Duurloop:  10 km wedstrijdtempo + 30 á 60 sec <br></br>
-							Grofweg bij 1km+ 2 min pauze, 100-400m 100/200 meter wandelen / joggen en 400m-1km 1.5 min pauze 
-						</p>
+								Duurloop:  10 km wedstrijdtempo + 30 á 60 sec <br></br>
+								Grofweg bij 1km+ 2 min pauze, 100-400m 100/200 meter wandelen / joggen en 400m-1km 1.5 min pauze 
+							</p>
+						  </div>
+						</div>
+					  </div>
 					</div>	
+					</div>
 
 						
-					<div id="table_container" className="container table_container">
+					<div id="table_container" className="container table_container mb-5">
 						{ this.state.show_table ?  <Table colnames={["Date", "Time", "Distance", "Average speed"]} rows={this.state.data_sessions.map((x) => Session_row(x))} theme={this.state.theme} /> : null}
 					</div> 
 				</div>

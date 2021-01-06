@@ -1,7 +1,3 @@
-body {
-	height: 100vh;
-}
-
 .session-box {
     width: 30%;
     background-color: red;
@@ -80,8 +76,6 @@ body {
 th {
 	position: sticky;
 	top: 0px;
-	background-color: white;
-	color: black;
 }
 
 #navbar {
@@ -149,9 +143,10 @@ th {
 	margin-left: 30px;
 }
 
-.flex {
+.training-title {
 	display: flex;
 	flex-wrap: wrap;
+	justify-content: space-between;
 }
 
 .bg_no_success_dark {
@@ -212,7 +207,8 @@ th {
 }
 
 #div_buttons {
-	display: inline-block;
+	display: block;
+	text-align: center;
 }
 
 .center {
@@ -223,13 +219,21 @@ th {
 	margin: 10px;
 	padding: 10px;
 	border-radius: 10px;
+	min-width: 250px;
 }
 
 .text-left {
 	text-align: left;
 }
 
-.text-center {
-	text-align: center;
+.color-black {
+	color: black;
 }
+
+.training-week { 
+	text-align: center;
+	width: 100%;
+	max-width: 300px;
+}
+	
 	

@@ -1,5 +1,4 @@
 import React from 'react';
-import CSRFToken from './csrftoken';
 
 function getCookie(name) {
     var cookieValue = null;
@@ -16,48 +15,50 @@ function getCookie(name) {
     return cookieValue;
 }
 
-function handleTrainingButtonClicked(id) {
+function handleTrainingSubmitted(e, id, isChecked) {
+	e.preventDefault()
 	var csrftoken = getCookie('csrftoken')
+	var method = isChecked ? "POST" : "DELETE"
     const requestOptions = {
-      method: "POST",
-      headers: { "Content-Type": "application/json"},
+      method: method,
+      headers: { 
+		"Content-Type": "application/json",
+		'X-CSRFToken': csrftoken	  
+	  },
       body: JSON.stringify({
         training_id: id,
-		csrfmiddlewaretoken: csrftoken,
       }),
 	  credentials: 'same-origin',
     };
-    fetch("/api/training", requestOptions)
-      .then((response) => response.json())
-      .then((data) => console.log(data));
+	if (method === "POST") {
+		fetch("/api/training", requestOptions)
+		  .then((response) => {response.json()})
+		  .then((data) => console.log(data));
+	} else {
+		fetch("/api/training", requestOptions)
+		  .then((response) => {console.log(response)})
+	}
 }
   
   
 const Training = (props) => {
 	var className = "training_div"
 	var isChecked = props.checked.filter((x) => x.training_id === props.id).length > 0
-	if (isChecked) className += " bg_success"
-	else if (props.theme === "dark") className += " bg_no_success_dark"
-	else className += " bg_no_success"
+	if (isChecked) className += " bg-primary"
+	else className += " bg-secondary"
+	var btnClassName = props.theme === "dark" ? "btn btn-dark ms-5" : "btn btn-light ms-5"
 
 	return (
 		<div id={ props.id } className={className}>
-			<div className="flex"> 
-				<h5 className="mr-3"> Training { props.training_number }</h5>
+			<div className="training-title"> 
+				<h5 className="mr-5"> Training { props.training_number }</h5>
 				<div>
-					<form> 
-						< CSRFToken />
-						<input name={props.id} type="hidden" value = { 0 }></input>
-						<input name={props.id} value={ 1 } onClick={(e) => props.handleCheckBox(e, props.id)} type="checkbox" 
-							checked={isChecked} className="mr-1" id={"exampleCheck" + props.id}></input>
-						<label className="form-check-label" htmlFor={"exampleCheck" + props.id}>Voltooid</label>
+					<form onSubmit={(e) => handleTrainingSubmitted(e, props.id, isChecked)}> 
+						<button style={{"width": "82.66px"}} onClick={() => props.handleChangeTraining(props.id, isChecked)} className={btnClassName}> { isChecked ? "Remove" : "Add"}</button>
 					</form>
-					<button className="btn btn-primary ml-3" onClick={(e) => handleTrainingButtonClicked(props.id)}> Submit</button>
 				</div>
 			</div>
-			<ul>
-				<li> {props.training} </li>
-			</ul>
+			<p> {props.training} </p>
 		</div>
 	)
 }

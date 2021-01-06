@@ -11,15 +11,16 @@ const Navbar = (props) => {
 	
   return (
     <nav id="navbar" class={"navbar navbar-expand-lg " + className}>
+	  <div class="container-fluid">
 	  <a class="navbar-brand" href="#">Running</a>
-	  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+	  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 		<span class="navbar-toggler-icon"></span>
 	  </button>
 
 	  <div class="collapse navbar-collapse" id="navbarSupportedContent">
 		<ul class="navbar-nav mr-auto">
 			<li class="nav-item">
-				<a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+				<a class="nav-link" href="/">Home <span class="sr-only"></span></a>
 			</li>
 			<li class="nav-item">
 			  <a class="nav-link" href="/wedstrijden">Wedstrijden </a>
@@ -31,10 +32,11 @@ const Navbar = (props) => {
 			  <a class="nav-link" href="/logout">Logout</a>
 			</li>
 		</ul>
-		<div class="custom-control custom-switch">
-		  <input type="checkbox" class="custom-control-input" id="customSwitch1" onChange={(e) => props.onChange(e)} checked={checked}></input>
-		  <label class="custom-control-label" for="customSwitch1">Dark mode</label>
+		<div class="ms-auto form-check form-switch">
+	      <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" onChange={(e) => props.onChange(e)} checked={checked}></input>
+		  <label class="form-check-label" for="flexSwitchCheckDefault">Dark mode</label>
 		</div>
+	  </div>
 	  </div>
 	</nav>
   )

@@ -4,14 +4,9 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from app.models import Session
 from django.contrib.auth.models import User
+from django.urls import reverse
 
 # Create your views here. 
-def index(request):
-    if not request.user.is_authenticated:
-        return render(request, "frontend/login.html", {"message": None})
-    else: 
-        return render(request, "frontend/index.html")
-
 def login_view(request):
     if request.method == "POST":
         username = request.POST["username"]
@@ -23,7 +18,11 @@ def login_view(request):
         else:
             return render(request, "frontend/login.html", {"message": "Invalid credentials."})
     else:
-        return render(request, "frontend/login.html")      
+        return render(request, "frontend/login.html")   
+
+@login_required
+def index(request):
+    return render(request, "frontend/index.html")        
 
 @login_required
 def match(request):

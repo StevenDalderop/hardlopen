@@ -61,10 +61,16 @@ class TrainingView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
-    def delete(self, request, pk, format=None):
-        training = self.get_object(pk)
-        training.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+    def delete(self, request, format=None):
+        training_id = request.data.get("training_id")
+        if training_id != None:
+            training_results = Training.objects.filter(training_id=training_id)
+            if len(training_results) > 0:
+                training = training_results[0]
+                training.delete()
+                return Response(status=status.HTTP_204_NO_CONTENT)
+            return Response({'Bad Request': 'Invalid Training Id'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'Bad Request': 'Invalid delete data, did not find a training id'}, status=status.HTTP_400_BAD_REQUEST)
         
 
 
