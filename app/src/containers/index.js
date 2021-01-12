@@ -3,8 +3,6 @@ import ReactDOM from 'react-dom';
 import Navbar from '../components/navbar';
 import Table from '../components/table';
 import Bar_plot from '../components/barplot';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap'
 
 const baseUrl = window.location.protocol + "//" +window.location.host
 
@@ -13,7 +11,8 @@ Number.prototype.padLeft = function(base,chr){
     return len > 0 ? new Array(len).join(chr || '0')+this : this;
 }
 
-function getFormattedDate(date) {
+function getFormattedDate(timestamp) {
+  var date = new Date(Date.parse(timestamp))
   var year = date.getFullYear();
 
   var month = (1 + date.getMonth()).toString();
@@ -27,22 +26,41 @@ function getFormattedDate(date) {
   return day + '/' + month + '/' + year + " " + time;
 }
 
-function Session_row(props) {
+function getMinutePerKm(km_per_hour) {
+	var minutes = 60 / km_per_hour
+	var minutes_rounded = Math.floor(60 / km_per_hour)
+	var seconds = Math.floor((minutes % 1) * 60) 
+	return minutes_rounded + ":" + seconds.padLeft()
+}	
+
+function getFormattedTime(seconds) {
+	var minutes = seconds / 60 
+	var minutes_rounded = Math.floor(minutes)
+	var seconds_remainder = Math.round(seconds % 60)
+	return minutes_rounded + ":" + seconds_remainder.padLeft()
+}
+
+function getFormattedDistance(km) {
+	return Math.round(km * 100) / 100
+}	
+
+function Session_row(props, settings) {
     if (props == null) { 
         return null
     } else {
+		var formatted_speed = settings === "min/km" ? getMinutePerKm(props.avg_speed) + " min/km" : Math.round(props.avg_speed * 100) / 100 + " km/h"
         return (
             <tr>
-				<td><a href={props.index}>{getFormattedDate(new Date(Date.parse(props.timestamp)))}</a></td>
-				<td>{Math.round(props.total_elapsed_time / 60)}</td>
-				<td>{Math.round(props.total_distance * 100) / 100}</td>
-				<td>{Math.round(props.avg_speed * 100) / 100}</td>
+				<td><a href={"session/" + props.index}>{getFormattedDate(props.timestamp)}</a></td>
+				<td>{getFormattedTime(props.total_elapsed_time)}</td>
+				<td>{getFormattedDistance(props.total_distance) + " km"}</td>
+				<td>{formatted_speed}</td>
             </tr>            
         )
     }
 }
 
-class App extends React.Component {
+export default class Index extends React.Component {
 	constructor(props) {
         super(props);
         this.state = {
@@ -54,6 +72,7 @@ class App extends React.Component {
 			"show_bar_plot": false,
 			"theme": "light",
 			"show": [],
+			"settings": "min/km",
         }
     }
 	
@@ -87,10 +106,6 @@ class App extends React.Component {
 		}
 		
 		let theme = localStorage.getItem('theme');
-		if (theme === "dark") { 
-			document.body.style.backgroundColor = 'rgb(' + 50 + ',' + 50 + ','+ 50 + ')';
-			document.body.style.color = 'white';
-		}
 		this.setState({"theme": theme}) 
 		
         fetch(`${baseUrl}/api/sessions/`)
@@ -125,6 +140,14 @@ class App extends React.Component {
 		else if (this.state.show_graph === "month") btn_month_className += " active"
 		if (this.state.theme === "dark") {btn_year_className += " btn-dark"; btn_month_className += " btn-dark"}
 		else {btn_year_className += " btn-primary"; btn_month_className += " btn-primary"}
+		
+		if (this.state.theme === "dark") { 
+			document.body.style.backgroundColor = 'rgb(' + 50 + ',' + 50 + ','+ 50 + ')';
+			document.body.style.color = 'white';
+		} else {
+			document.body.style.backgroundColor = 'white';
+			document.body.style.color = 'black';
+		}
 				
         return (
 			<div className={this.state.theme}>
@@ -203,12 +226,11 @@ class App extends React.Component {
 
 						
 					<div id="table_container" className="container table_container mb-5">
-						{ this.state.show_table ?  <Table colnames={["Date", "Time", "Distance", "Average speed"]} rows={this.state.data_sessions.map((x) => Session_row(x))} theme={this.state.theme} /> : null}
+						{ this.state.show_table ?  <Table colnames={["Date", "Time", "Distance", "Average speed"]} 
+						rows={this.state.data_sessions.map((x) => Session_row(x, this.state.settings))} theme={this.state.theme} /> : null}
 					</div> 
 				</div>
 			</div>
         )
     }
 }
-
-ReactDOM.render(<App />, document.getElementById('react_container'));

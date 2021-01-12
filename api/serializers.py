@@ -27,7 +27,9 @@ class MatchSerializer(serializers.HyperlinkedModelSerializer):
         model = Matches
         fields = '__all__'
 
-class TrainingSerializer(serializers.ModelSerializer):    
+class TrainingSerializer(serializers.ModelSerializer):  
+    index = serializers.IntegerField(read_only=False)
+  
     class Meta:
         model = Training
         fields = '__all__'

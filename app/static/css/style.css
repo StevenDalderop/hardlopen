@@ -8,7 +8,7 @@
 .grid-container {
 	display: grid;
 	grid-template-columns: 1fr 1fr;
-	grid-template-rows: 1fr 1fr 1fr;
+	grid-template-rows: auto auto auto;
 	grid-column-gap: 15px;
 	grid-row-gap: 15px;
 	padding: 15px;
@@ -103,7 +103,7 @@ th {
 @media (max-width: 800px) {
 	.grid-container {
 		grid-template-columns: 1fr;
-		grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
+		grid-template-rows: repeat(5, auto);
 		grid-template-areas: "map" "session" "lap" "svg1" "svg2";
 	}
 }
@@ -149,50 +149,7 @@ th {
 	justify-content: space-between;
 }
 
-.bg_no_success_dark {
-	background-color: green;
-	opacity: 0.5;
-}
-
-.bg_no_success {
-	background-color: rgb(195, 240, 153);
-}
-
-.bg_success {
-	background-color: green;
-}
-
-#bar {
-	position: relative;
-	height: 50px;
-}
-
-#progress {
-	position: absolute;
-	height: 50px;
-	min-width: 1%;
-	left: 0px;
-	top: 0px;
-}
-
-#no_progress {
-	position: absolute;
-	height: 50px;
-}
-
-.front {
-	z-index: 1000;
-	position: absolute;
-	width: 100%;
-	text-align: center;
-	top: 50%;
-	transform: translateY(-50%);
-}
-
 #trainings {
-	display: flex;
-	flex-wrap: wrap;
-	justify-content: center;
 	margin-top: 15px;
 }
 
@@ -232,8 +189,11 @@ th {
 
 .training-week { 
 	text-align: center;
-	width: 100%;
-	max-width: 300px;
 }
-	
+
+.div-training-week {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+}
 	

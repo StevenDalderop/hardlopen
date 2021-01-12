@@ -15,50 +15,46 @@ function getCookie(name) {
     return cookieValue;
 }
 
-function handleTrainingSubmitted(e, id, isChecked) {
+function handleTrainingSubmitted(e, index, completed) {
 	e.preventDefault()
 	var csrftoken = getCookie('csrftoken')
-	var method = isChecked ? "POST" : "DELETE"
     const requestOptions = {
-      method: method,
+      method: "POST",
       headers: { 
 		"Content-Type": "application/json",
 		'X-CSRFToken': csrftoken	  
 	  },
       body: JSON.stringify({
-        training_id: id,
+        index: index,
+		completed: completed
       }),
 	  credentials: 'same-origin',
     };
-	if (method === "POST") {
-		fetch("/api/training", requestOptions)
-		  .then((response) => {response.json()})
-		  .then((data) => console.log(data));
-	} else {
-		fetch("/api/training", requestOptions)
-		  .then((response) => {console.log(response)})
-	}
+	console.log("training submitted")
+	fetch("/api/training", requestOptions)
+      .then((response) => response.json())
+      .then((data) => console.log(data));
 }
   
   
 const Training = (props) => {
 	var className = "training_div"
-	var isChecked = props.checked.filter((x) => x.training_id === props.id).length > 0
-	if (isChecked) className += " bg-primary"
+	if (props.completed) className += " bg-primary"
 	else className += " bg-secondary"
 	var btnClassName = props.theme === "dark" ? "btn btn-dark ms-5" : "btn btn-light ms-5"
 
 	return (
-		<div id={ props.id } className={className}>
+		<div className={className}>
 			<div className="training-title"> 
-				<h5 className="mr-5"> Training { props.training_number }</h5>
+				<h5 className="mr-5"> Training { props.training_nr }</h5>
 				<div>
-					<form onSubmit={(e) => handleTrainingSubmitted(e, props.id, isChecked)}> 
-						<button style={{"width": "82.66px"}} onClick={() => props.handleChangeTraining(props.id, isChecked)} className={btnClassName}> { isChecked ? "Remove" : "Add"}</button>
+					<form onSubmit={(e) => handleTrainingSubmitted(e, props.index, props.completed)}> 
+						<button style={{"width": "82.66px"}} onClick={() => props.handleChangeTraining(props.index)} 
+						className={btnClassName}> { props.completed ? "Remove" : "Add"}</button>
 					</form>
 				</div>
 			</div>
-			<p> {props.training} </p>
+			<p> {props.description} </p>
 		</div>
 	)
 }

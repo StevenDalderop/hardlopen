@@ -57,40 +57,10 @@ class TrainingView(APIView):
     def post(self, request, format=None):
         serializer = TrainingSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()    
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        
-    def delete(self, request, format=None):
-        training_id = request.data.get("training_id")
-        if training_id != None:
-            training_results = Training.objects.filter(training_id=training_id)
-            if len(training_results) > 0:
-                training = training_results[0]
-                training.delete()
-                return Response(status=status.HTTP_204_NO_CONTENT)
-            return Response({'Bad Request': 'Invalid Training Id'}, status=status.HTTP_400_BAD_REQUEST)
-        return Response({'Bad Request': 'Invalid delete data, did not find a training id'}, status=status.HTTP_400_BAD_REQUEST)
-        
-
-
-
-@login_required 
-def completed_training(request):
-    if request.method == "POST":
-        checked = request.POST
-        training_id = list(checked.keys())[1]
-        voltooid = int(checked[training_id][0])
-        if not Training.objects.filter(training_id=training_id) and voltooid:
-            t = Training(training_id = training_id)
-            t.save()
-        elif Training.objects.filter(training_id=training_id) and not voltooid:
-            t = Training.objects.filter(training_id=training_id)[0]
-            t.delete()        
-        return redirect(reverse("schedule"))
-    elif request.method == "GET":
-        trainings = Training.objects.all() 
-        res = []
-        for t in trainings:
-            res.append(t.training_id)
-        return JsonResponse(res, safe=False) 
+            index = serializer.data.get("index")
+            completed = serializer.data.get("completed")
+            training = Training.objects.get(index=index)
+            training.completed = completed
+            training.save()
+            return Response(TrainingSerializer(training).data, status=status.HTTP_200_OK)
+        return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)

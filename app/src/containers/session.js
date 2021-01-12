@@ -1,9 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Navbar from '../components/navbar';
-import Table from '../components/table';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap'
+import Table from '../components/table'
 
 const baseUrl = window.location.protocol + "//" +window.location.host
 
@@ -66,10 +64,7 @@ function create_svg(data, column, select_id) {
 	
 	svg.append("g")
 		.call(yAxis)
-		.selectAll("text").style("fill", "currentcolor")
-	
-
-		
+		.selectAll("text").style("fill", "currentcolor")	
 }
 
 
@@ -82,7 +77,7 @@ function Lap(index, data) {
 				<td scope="row">{index + 1}</td>
 				<td>{Math.floor(data.total_elapsed_time / 60)}:{Math.round(data.total_elapsed_time%60).padLeft()} </td>
 				<td>{Math.round(data.total_distance * 100) / 100} km </td>
-				<td>{Math.round(data.avg_speed * 100) / 100} km/h </td>
+				<td>{getMinutePerKm(data.avg_speed)} min/km </td>
             </tr>            
         )
     }
@@ -92,6 +87,13 @@ Number.prototype.padLeft = function(base,chr){
     var  len = (String(base || 10).length - String(this).length)+1;
     return len > 0? new Array(len).join(chr || '0')+this : this;
 }
+
+function getMinutePerKm(km_per_hour) {
+	var minutes = 60 / km_per_hour
+	var minutes_rounded = Math.floor(60 / km_per_hour)
+	var seconds = Math.floor((minutes % 1) * 60) 
+	return minutes_rounded + ":" + seconds.padLeft()
+}	
 
 function getFormattedDate(date) {
   var year = date.getFullYear();
@@ -107,6 +109,13 @@ function getFormattedDate(date) {
   return day + '/' + month + '/' + year + " " + time;
 }
 
+function getFormattedTime(seconds) {
+	var minutes = seconds / 60 
+	var minutes_rounded = Math.floor(minutes)
+	var seconds_remainder = Math.round(seconds % 60)
+	return minutes_rounded + ":" + seconds_remainder.padLeft()
+}
+
 function Session_data(props) {
     if (props == null) { 
         return null
@@ -116,9 +125,9 @@ function Session_data(props) {
         return (
 			<div>
 				<span><b>Date:</b> {days[new Date(Date.parse(props.timestamp)).getDay()]} {getFormattedDate(new Date(Date.parse(props.timestamp)))} </span> <br></br>
-				<span><b>Time:</b> {Math.floor(props.total_elapsed_time / 60)}:{Math.round(props.total_elapsed_time%60).padLeft()}</span> <br></br>
+				<span><b>Time:</b> {getFormattedTime(props.total_elapsed_time)}</span> <br></br>
 				<span><b>Distance:</b> {Math.round(props.total_distance * 100) / 100} km</span> <br></br>
-				<span><b>Average speed:</b> {Math.round(props.avg_speed * 100) / 100} km/h</span> <br></br>
+				<span><b>Average speed:</b> {getMinutePerKm(props.avg_speed) + " min/km"}</span> <br></br>
 				<span><b>Average heart rate:</b> {props.avg_heart_rate} </span> <br></br>
 				<span><b>Max heart rate:</b> {props.max_heart_rate} </span> <br></br>
 				<span><b>Average running cadence:</b> {props.avg_running_cadence} </span> 
@@ -127,7 +136,7 @@ function Session_data(props) {
     }
 }
 
-class App extends React.Component {
+export default class Session extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -136,7 +145,7 @@ class App extends React.Component {
 			"data_records": null, 
 			"theme": "light",
         }
-		this.axiosCancelSource = axios.CancelToken.source()
+		this.session_id = this.props.match.params.session_id
     }
 	
 	handleChangeNav(e) {
@@ -165,22 +174,28 @@ class App extends React.Component {
 		}
 		this.setState({"theme": theme})
 		
-        axios.get(`${baseUrl}/api/sessions/${id}/laps`, {cancelToken: this.axiosCancelSource.token})
-            .then(res => {
-                this.setState({"data_laps": res.data.results});
+        fetch(`${baseUrl}/api/sessions/${this.session_id}/laps`)
+            .then(response => response.json())
+			.then(data => {
+                this.setState({"data_laps": data.results});
             })
 			.catch(err => console.log(err))
 			
-		axios.get(`${baseUrl}/api/sessions/${id}`, {cancelToken: this.axiosCancelSource.token})
-            .then(res => {
-                this.setState({"data_session": res.data});
+
+			
+		fetch(`${baseUrl}/api/sessions/${this.session_id}`)
+            .then(response => response.json())
+			.then(data => {
+                this.setState({"data_session": data});
             })
 			.catch(err => console.log(err))
 		
 		
-		axios.get(`${baseUrl}/api/sessions/${id}/records`, {cancelToken: this.axiosCancelSource.token})
-            .then(res => {
-                this.setState({"data_records": res.data});
+		fetch(`${baseUrl}/api/sessions/${this.session_id}/records`)
+            .then(response => response.json())
+			.then(data => {
+                this.setState({"data_records": data})
+			
 				
 				// create a red polyline from an array of LatLng points
 				var latlngs = this.state.data_records.map((x) => [x["position_lat"], x["position_long"]])
@@ -205,11 +220,7 @@ class App extends React.Component {
 				create_svg(data, "heart_rate", "#svg2")								
             })
 			.catch(err => console.log(err))
-    }
-	
-	componentWillUnmount() {
-		this.axiosCancelSource.cancel("Axios request cancelled")
-	}		
+    }	
 
     render() {
         if (this.state.data_laps) {
@@ -251,5 +262,3 @@ class App extends React.Component {
         )
     }
 }
-
-ReactDOM.render(<App />, document.getElementById('react_container'));

@@ -100,7 +100,13 @@ class Matches(models.Model):
     
 class Training(models.Model):
     index = models.AutoField(primary_key=True)
-    training_id = models.IntegerField(blank=True, null=True, unique=True)
+    description = models.TextField(blank=True, null=True)
+    week = models.IntegerField(blank=True, null=True)
+    training_nr = models.IntegerField(blank=True, null=True)
+    completed = models.BooleanField(default=False)
 
     class Meta: 
-        db_table = 'training'    
+        db_table = 'training' 
+
+    def __str__(self):
+        return f"week: {self.week} training_nr {self.training_nr} completed {self.completed} {self.description}"

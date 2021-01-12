@@ -1,26 +1,39 @@
-import 'bootstrap/dist/css/bootstrap.min.css';
-
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Navbar from '../components/navbar';
 import Table from '../components/table';
-import 'bootstrap';
-
 
 const baseUrl = window.location.protocol + "//" +window.location.host
+
+Number.prototype.padLeft = function(base,chr){
+    var  len = (String(base || 10).length - String(this).length)+1;
+    return len > 0 ? new Array(len).join(chr || '0')+this : this;
+}
+
+function getFormattedSpeed(km, formatted_time) {
+	var pattern = /\d+/g
+	var result = formatted_time.match(pattern)
+	var hours = parseInt(result[0])
+	var minutes = parseInt(result[1])
+	var seconds = parseInt(result[2])
+	var total_seconds = hours * 60 * 60 + minutes * 60 + seconds
+	var seconds_per_km = total_seconds / km
+	return Math.floor(seconds_per_km  / 60) + ":" + Math.round(seconds_per_km % 60).padLeft()
+}	
 
 function Matches_Row(props) {
 	return (
 		<tr> 
 			<td> {props.date} </td>
-			<td> {props.distance} </td>
+			<td> {Math.round(props.distance * 100) / 100 + " km"} </td>
 			<td> {props.time} </td>
+			<td> {getFormattedSpeed(props.distance, props.time) + " min/km"} </td>
 			<td> {props.name} </td>
 		</tr>
 	)
 }
 
-class App extends React.Component {
+export default class Competitions extends React.Component {
 	constructor(props) {
 		super(props)
 		this.state = {
@@ -48,6 +61,7 @@ class App extends React.Component {
 		fetch(`${baseUrl}/api/matches`)
 		    .then(res => res.json())
 			.then(data => {
+				console.log(data)
 				this.setState({"wedstrijden": data.results})
 				this.setState({"filtered": "all"})
 				})
@@ -72,10 +86,7 @@ class App extends React.Component {
 		if (this.state.filtered === "all") {
             var wedstrijden = this.state.wedstrijden.map((data) => Matches_Row(data));
 			var name = "All competitions"
-        } else if (this.state.filtered === "prs") {
-			var wedstrijden = this.state.wedstrijden.filter((x) => {return x.isRecord}).map((data) => Matches_Row(data));
-			var name = "Personal records"
-		} else if (this.state.filtered === "best") {
+        } else if (this.state.filtered === "best") {
 			let temp = []
 			for (let distance of [5, 10, 21.1, 42.2]) {
 				let record = this.state.wedstrijden.filter((x) => {return x.isRecord && x.distance === distance})[0]
@@ -83,15 +94,12 @@ class App extends React.Component {
 			}
 			var wedstrijden = temp
 			var name = "Current personal records"
-		} else if (this.state.filtered === "5 KM") {
-			var wedstrijden = this.state.wedstrijden.filter((x) => {return x.distance === 5}).map((data) => Matches_Row(data));
-			var name = "5 KM"
-		} else if (this.state.filtered === "10 KM") {
-			var wedstrijden = this.state.wedstrijden.filter((x) => {return x.distance === 10}).map((data) => Matches_Row(data));
-			var name = "10 KM"
-		} else if (this.state.filtered === "21.1 KM") {
-			var wedstrijden = this.state.wedstrijden.filter((x) => {return x.distance === 21.1}).map((data) => Matches_Row(data));
-			var name = "21.1 KM"
+		}  else if (this.state.filtered === "prs") {
+			var wedstrijden = this.state.wedstrijden.filter((x) => {return x.isRecord}).map((data) => Matches_Row(data));
+			var name = "Personal records"
+		} else if (this.state.filtered === 5 || this.state.filtered === 10 || this.state.filtered === 21.1) {
+			var wedstrijden = this.state.wedstrijden.filter((x) => {return x.distance === this.state.filtered}).map((data) => Matches_Row(data));
+			var name = this.state.filtered.toString() + " KM"
 		} else {
             var wedstrijden = null;
         }
@@ -108,7 +116,7 @@ class App extends React.Component {
 		return (
 		<div className={this.state.theme} >
 			<Navbar theme={this.state.theme} onChange={(e) => this.handleChangeNav(e)} />
-			<div id="content" className="center">
+			<div id="content" className="container center">
 				<div id="buttons-group">
 					<div className="dropdown">
 					  <button className={btn_className} type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -118,21 +126,20 @@ class App extends React.Component {
 						<a className="dropdown-item" href="#" onClick={() => this.setState({"filtered": "all", "search": ""})}>All competitions </a>
 						<a className="dropdown-item" href="#" onClick={() => this.setState({"filtered": "prs", "search": ""})}>Personal records</a>
 						<a className="dropdown-item" href="#" onClick={() => this.setState({"filtered": "best", "search": ""})}>Current personal records</a>
-						<a className="dropdown-item" href="#" onClick={() => this.setState({"filtered": "5 KM", "search": ""})}>5 KM</a>
-						<a className="dropdown-item" href="#" onClick={() => this.setState({"filtered": "10 KM", "search": ""})}>10 KM</a>
-						<a className="dropdown-item" href="#" onClick={() => this.setState({"filtered": "21.1 KM", "search": ""})}>21.1 KM</a>
+						<a className="dropdown-item" href="#" onClick={() => this.setState({"filtered": 5, "search": ""})}>5 KM</a>
+						<a className="dropdown-item" href="#" onClick={() => this.setState({"filtered": 10, "search": ""})}>10 KM</a>
+						<a className="dropdown-item" href="#" onClick={() => this.setState({"filtered": 21.1, "search": ""})}>21.1 KM</a>
 					  </div>
 					</div>
 					<form className="form-inline my-lg-0 mx-3">
 					  <input className="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" value={this.state.search} onChange={this.handleChange}></input>
 					</form>
 				</div>
-				<div className="container table_container">
-					<Table colnames={["Date", "Distance", "Time", "Name"]} rows={wedstrijden} theme={this.state.theme} />
+				<div className="table_container">
+					<Table colnames={["Date", "Distance", "Time", "Speed", "Name"]} rows={wedstrijden} theme={this.state.theme} />
 				</div>
 			</div>			
 		</div>
 		)
 	}	
 }
-ReactDOM.render(<App />, document.getElementById('react_container'));
