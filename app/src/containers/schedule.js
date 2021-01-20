@@ -64,7 +64,7 @@ export default class Schedule extends React.Component {
 	
 	renderTraining(t, training_nr) {
 		return(
-			< Training week={t.week} training_nr={training_nr} completed={t.completed} index={t.index}
+			< Training key={t.index} week={t.week} training_nr={training_nr} completed={t.completed} index={t.index}
 			description={t.description} theme={this.state.theme} handleChangeTraining={() => this.handleChangeTraining(t.index)} />
 		)
 	}
@@ -72,7 +72,7 @@ export default class Schedule extends React.Component {
 	renderWeekTraining(week, trainings_week) {
 		var trainings = sortByKey(trainings_week, "training_nr").map((t, training_nr) => this.renderTraining(t, training_nr + 1))	
 		return (
-			<div className="training-week">
+			<div key={week} className="training-week">
 				<h3> Week {week} </h3>
 				<div className="div-training-week">
 					{ trainings }
@@ -91,8 +91,9 @@ export default class Schedule extends React.Component {
 		return result 
 	}
 	
-	render() {			
-		if (this.state.training_data.length > 0) {
+	render() {	
+		var dataIsLoaded = this.state.training_data.length > 0		
+		if (dataIsLoaded) {
 			var bar_width = this.state.training_data.filter((x) => x.completed).length / this.state.training_data.length * 100
 			var trainings = this.renderAllTraining(this.state.training_data)
 		} else {
@@ -102,12 +103,12 @@ export default class Schedule extends React.Component {
 		
 		return (
 			<div className={this.state.theme} >
-				<Navbar theme={this.state.theme} onChange={(e) => this.handleChangeNav(e)} />
+				<Navbar theme={this.state.theme} onChange={(e) => this.handleChangeNav(e)} active="Schema" />
 				<div id="content">
 					<div className="container"> 
 						<h1 className="center mb-4"> Schema </h1>
-						<div class="progress">
-							<div class="progress-bar" style={{width: bar_width + "%"}} 
+						<div className="progress">
+							<div className="progress-bar" style={{width: bar_width + "%"}} 
 							role="progressbar" aria-valuenow={bar_width} aria-valuemin="0" 
 							aria-valuemax="100">{Math.round(bar_width) + "%"}</div>
 						</div>

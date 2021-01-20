@@ -4,10 +4,11 @@ var webpack = require('webpack');
 module.exports = {
   entry:  {
 	  start: path.join(__dirname, 'src/index'),
+	  login: path.join(__dirname, 'src/containers/login'), 
   },
   output: {
     path: path.join(__dirname, 'static/app'),
-	publicPath: "/static/",
+	  publicPath: "/static/",
     filename: '[name].js'
   },
   module: {
@@ -16,11 +17,7 @@ module.exports = {
           test: /\.jsx?$/,
           loader: 'babel-loader',
           exclude: /node_modules/,
-        },
-		{
-			test: /\.css$/,
-			use: ['style-loader', 'css-loader']
-		}
+        }
       ],
     },
 }

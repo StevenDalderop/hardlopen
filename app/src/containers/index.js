@@ -1,78 +1,17 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Navbar from '../components/navbar';
-import Table from '../components/table';
 import Bar_plot from '../components/barplot';
 
-const baseUrl = window.location.protocol + "//" +window.location.host
-
-Number.prototype.padLeft = function(base,chr){
-    var  len = (String(base || 10).length - String(this).length)+1;
-    return len > 0 ? new Array(len).join(chr || '0')+this : this;
-}
-
-function getFormattedDate(timestamp) {
-  var date = new Date(Date.parse(timestamp))
-  var year = date.getFullYear();
-
-  var month = (1 + date.getMonth()).toString();
-  month = month.length > 1 ? month : '0' + month;
-
-  var day = date.getDate().toString();
-  day = day.length > 1 ? day : '0' + day;
-  
-  var time = [date.getHours().padLeft(), date.getMinutes().padLeft(), date.getSeconds().padLeft()].join(':');
-  
-  return day + '/' + month + '/' + year + " " + time;
-}
-
-function getMinutePerKm(km_per_hour) {
-	var minutes = 60 / km_per_hour
-	var minutes_rounded = Math.floor(60 / km_per_hour)
-	var seconds = Math.floor((minutes % 1) * 60) 
-	return minutes_rounded + ":" + seconds.padLeft()
-}	
-
-function getFormattedTime(seconds) {
-	var minutes = seconds / 60 
-	var minutes_rounded = Math.floor(minutes)
-	var seconds_remainder = Math.round(seconds % 60)
-	return minutes_rounded + ":" + seconds_remainder.padLeft()
-}
-
-function getFormattedDistance(km) {
-	return Math.round(km * 100) / 100
-}	
-
-function Session_row(props, settings) {
-    if (props == null) { 
-        return null
-    } else {
-		var formatted_speed = settings === "min/km" ? getMinutePerKm(props.avg_speed) + " min/km" : Math.round(props.avg_speed * 100) / 100 + " km/h"
-        return (
-            <tr>
-				<td><a href={"session/" + props.index}>{getFormattedDate(props.timestamp)}</a></td>
-				<td>{getFormattedTime(props.total_elapsed_time)}</td>
-				<td>{getFormattedDistance(props.total_distance) + " km"}</td>
-				<td>{formatted_speed}</td>
-            </tr>            
-        )
-    }
-}
+const baseUrl = window.location.protocol + "//" + window.location.host
 
 export default class Index extends React.Component {
 	constructor(props) {
         super(props);
         this.state = {
-            "data_sessions": null,
-			"next_page": null,
 			"data_laps": null,
-			"show_table": false,
-			"show_graph": "year",
 			"show_bar_plot": false,
 			"theme": "light",
-			"show": [],
-			"settings": "min/km",
         }
     }
 	
@@ -85,20 +24,6 @@ export default class Index extends React.Component {
 			localStorage.setItem('theme', "light");
 		}
 	}
-	
-	show(name) {
-		if (!this.state.show.includes(name)) this.setState(state => ({"show": [...state.show, name]}))
-		else {
-			this.setState(state => {
-				const index = state.show.indexOf(name);
-				var show = state.show
-				show.splice(index, 1)
-				if (index > -1) {
-					return {"show": show}
-				}
-			})
-		}
-	}
 
     componentDidMount() {
 		if (!localStorage.getItem('theme')) {
@@ -107,24 +32,7 @@ export default class Index extends React.Component {
 		
 		let theme = localStorage.getItem('theme');
 		this.setState({"theme": theme}) 
-		
-        fetch(`${baseUrl}/api/sessions/`)
-            .then(res=> res.json())
-            .then(data => {
-                this.setState({"data_sessions": data.results, "next_page": data.next, "show_table": true});
-				let table = document.querySelector("#table_container")
-				const self = this
-				table.onscroll = () => {
-					if( (table.scrollTop === (table.scrollHeight - table.offsetHeight)) && self.state.next_page) {
-						fetch(self.state.next_page)
-							.then(res=> res.json())
-							.then(data => {
-								this.setState((state) => {return ({"data_sessions": state.data_sessions.concat(data.results), "next_page": data.next})});
-							})
-					}
-				}
-            })
-					
+						
 		fetch(`${baseUrl}/api/laps/`)
             .then(res=> res.json())
             .then(data => {       
@@ -151,30 +59,24 @@ export default class Index extends React.Component {
 				
         return (
 			<div className={this.state.theme}>
-				<Navbar theme={this.state.theme} onChange={(e) => this.handleChange(e)} />
-				<div id="content">
-					<div id="div_buttons" className="btn-group mb-3" role="group" aria-label="Basic example">
-					  <button type="button" className={btn_year_className} onClick={() => this.setState({"show_graph": "year"})}>Year</button>
-					  <button type="button" className={btn_month_className} onClick={() => this.setState({"show_graph": "month"})}>Month</button>
-					</div>			
-					
-											
-					{ this.state.show_bar_plot && this.state.show_graph === "year" ? < Bar_plot data_input={this.state.data_laps} id_name={"svg_" + this.state.show_graph} 
-						timeframe={this.state.show_graph} width={400} height={400} /> : null}
-					{ this.state.show_bar_plot && this.state.show_graph === "month" ? < Bar_plot data_input={this.state.data_laps} id_name={"svg_" + this.state.show_graph} 
-						timeframe={this.state.show_graph} width={400} height={400} /> : null}
-					
-					<div class="container">
-					<div class="accordion mb-3 bg-light" id="accordionExample">
-					  <div class="accordion-item">
-						<h2 class="accordion-header" id="headingOne">
-						  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-							Tips
-						  </button>
-						</h2>
-						<div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
-						  <div class="accordion-body">
-							<div class="color-black">
+				<Navbar theme={this.state.theme} onChange={(e) => this.handleChange(e)} active="Home" />
+				<div id="content">	
+					<div className="container">
+						<div className="row text-center">
+							<div className="col-sm">
+								{ this.state.show_bar_plot ? 
+								< Bar_plot data_input={this.state.data_laps} id_name="svg_year" 
+								timeframe="year" width={400} height={400} /> : 
+								<div className={"loader bg-" + this.state.theme}> </div>}	
+							</div>
+							<div className="col-sm">
+								{ this.state.show_bar_plot ? < Bar_plot data_input={this.state.data_laps} id_name="svg_month"
+								timeframe="month" width={400} height={400} /> : <div className={"loader bg-" + this.state.theme}> </div>}
+							</div>
+						</div>
+						<div className="row">
+							<div className="col-lg">
+								<h3> Tips </h3>
 								<ul>
 									<li> Goed inlopen (~2km) en uitlopen (~1km) </li>
 									<li> Halveer trainingen voor wedstrijd </li>
@@ -182,20 +84,11 @@ export default class Index extends React.Component {
 									<li> Probeer ongeveer 180 passen per minuut aan te houden </li>
 									<li> Af en toe korte versnelling van 50 a 200m </li>
 									<li> Wisselduurloop rustig uitbouwen met 5 a 10 % per week </li>
-								</ul>		
+								</ul>
 							</div>
-						  </div>
-						</div>
-					  </div>
-					  <div class="accordion-item">
-						<h2 class="accordion-header" id="headingTwo">
-						  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-							Tempos
-						  </button>
-						</h2>
-						<div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
-						  <div class="accordion-body">
-							 <p class="color-black">
+							<div className="col-lg">
+								<h3> Tempos </h3>
+								<p>
 								De volgde tempotijden kun je ongeveer aanhouden afhankelijk van het aantal tempo’s en de 
 								arbeid/rust verhouding en de vorm van de dag (gevoel). <br></br>
 
@@ -217,18 +110,10 @@ export default class Index extends React.Component {
 
 								Duurloop:  10 km wedstrijdtempo + 30 á 60 sec <br></br>
 								Grofweg bij 1km+ 2 min pauze, 100-400m 100/200 meter wandelen / joggen en 400m-1km 1.5 min pauze 
-							</p>
-						  </div>
+								</p>
+							</div>
 						</div>
-					  </div>
-					</div>	
 					</div>
-
-						
-					<div id="table_container" className="container table_container mb-5">
-						{ this.state.show_table ?  <Table colnames={["Date", "Time", "Distance", "Average speed"]} 
-						rows={this.state.data_sessions.map((x) => Session_row(x, this.state.settings))} theme={this.state.theme} /> : null}
-					</div> 
 				</div>
 			</div>
         )

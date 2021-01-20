@@ -2,24 +2,18 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Navbar from '../components/navbar';
 import Table from '../components/table';
+import { getFormattedSpeed } from '../util';
 
 const baseUrl = window.location.protocol + "//" +window.location.host
 
-Number.prototype.padLeft = function(base,chr){
-    var  len = (String(base || 10).length - String(this).length)+1;
-    return len > 0 ? new Array(len).join(chr || '0')+this : this;
-}
+var listItems = [{"filtered": "all", "name": "All competitions"}, {"filtered": "prs", "name": "Personal records"}, 
+{"filtered": "best", "name": "Current personal records"}, {"filtered": 5, "name": "5 KM"}, {"filtered": 10, "name": "10 KM"}, 
+{"filtered": 21.1, "name": "21.1 KM"}]
 
-function getFormattedSpeed(km, formatted_time) {
-	var pattern = /\d+/g
-	var result = formatted_time.match(pattern)
-	var hours = parseInt(result[0])
-	var minutes = parseInt(result[1])
-	var seconds = parseInt(result[2])
-	var total_seconds = hours * 60 * 60 + minutes * 60 + seconds
-	var seconds_per_km = total_seconds / km
-	return Math.floor(seconds_per_km  / 60) + ":" + Math.round(seconds_per_km % 60).padLeft()
-}	
+function DropDownItem(props) {
+	return (<a className="dropdown-item" href="#" onClick={(e) => props.handleClick(e, props.filtered)}>
+		{props.name} </a>)
+}
 
 function Matches_Row(props) {
 	return (
@@ -44,6 +38,7 @@ export default class Competitions extends React.Component {
 			"theme": "light",
 		}
 		this.handleChange = this.handleChange.bind(this);
+		this.handleClick = this.handleClick.bind(this);
 	}
 	
 	componentDidMount() {
@@ -81,57 +76,36 @@ export default class Competitions extends React.Component {
 			localStorage.setItem('theme', "light");
 		}
 	}
+
+	handleClick(e, filtered) {
+		e.preventDefault()
+		this.setState({"filtered": filtered, "search": ""})
+	} 
 	
 	render () {
-		if (this.state.filtered === "all") {
-            var wedstrijden = this.state.wedstrijden.map((data) => Matches_Row(data));
-			var name = "All competitions"
-        } else if (this.state.filtered === "best") {
-			let temp = []
-			for (let distance of [5, 10, 21.1, 42.2]) {
-				let record = this.state.wedstrijden.filter((x) => {return x.isRecord && x.distance === distance})[0]
-				temp.push(Matches_Row(record))
-			}
-			var wedstrijden = temp
-			var name = "Current personal records"
-		}  else if (this.state.filtered === "prs") {
-			var wedstrijden = this.state.wedstrijden.filter((x) => {return x.isRecord}).map((data) => Matches_Row(data));
-			var name = "Personal records"
-		} else if (this.state.filtered === 5 || this.state.filtered === 10 || this.state.filtered === 21.1) {
-			var wedstrijden = this.state.wedstrijden.filter((x) => {return x.distance === this.state.filtered}).map((data) => Matches_Row(data));
-			var name = this.state.filtered.toString() + " KM"
-		} else {
-            var wedstrijden = null;
-        }
-		
-		if (this.state.search) {
-			var wedstrijden = this.state.wedstrijden.filter((x) => {let regex = new RegExp(this.state.search, "i"); return regex.test(x.date) || regex.test(x.distance) || regex.test(x.time) || regex.test(x.name)}).map((data) => Matches_Row(data));
-		}			
-		
-		var btn_className = "btn dropdown-toggle"
-		if (this.state.theme === "dark") {btn_className += " btn-dark"}
-		else {btn_className += " btn-primary"}
-		
+		var name = this.state.filtered ? listItems.filter(x => x.filtered === this.state.filtered)[0].name : null
+		var isDarkTheme = this.state.theme === "dark"
+		var className = isDarkTheme ? " btn-dark" : " btn-primary"
+
+		var wedstrijden = this.filterWedstrijden();
+	
+		var dropDownItems = listItems.map((item, index) => < DropDownItem key={index} filtered={item.filtered} name={item.name} 
+			handleClick={(e, filtered) => this.handleClick(e, filtered)} />)
 		
 		return (
 		<div className={this.state.theme} >
-			<Navbar theme={this.state.theme} onChange={(e) => this.handleChangeNav(e)} />
+			<Navbar theme={this.state.theme} onChange={(e) => this.handleChangeNav(e)} active="Wedstrijden" />
 			<div id="content" className="container center">
 				<div id="buttons-group">
 					<div className="dropdown">
-					  <button className={btn_className} type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					  <button className={"btn dropdown-toggle" + className} type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 						{ name }
 					  </button>
 					  <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
-						<a className="dropdown-item" href="#" onClick={() => this.setState({"filtered": "all", "search": ""})}>All competitions </a>
-						<a className="dropdown-item" href="#" onClick={() => this.setState({"filtered": "prs", "search": ""})}>Personal records</a>
-						<a className="dropdown-item" href="#" onClick={() => this.setState({"filtered": "best", "search": ""})}>Current personal records</a>
-						<a className="dropdown-item" href="#" onClick={() => this.setState({"filtered": 5, "search": ""})}>5 KM</a>
-						<a className="dropdown-item" href="#" onClick={() => this.setState({"filtered": 10, "search": ""})}>10 KM</a>
-						<a className="dropdown-item" href="#" onClick={() => this.setState({"filtered": 21.1, "search": ""})}>21.1 KM</a>
+						{ dropDownItems }
 					  </div>
 					</div>
-					<form className="form-inline my-lg-0 mx-3">
+					<form className="form-inline my-lg-0 ms-3">
 					  <input className="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" value={this.state.search} onChange={this.handleChange}></input>
 					</form>
 				</div>
@@ -142,4 +116,35 @@ export default class Competitions extends React.Component {
 		</div>
 		)
 	}	
+
+
+	filterWedstrijden() {
+		if (this.state.filtered === "best") {
+			let temp = [];
+			for (let distance of [5, 10, 21.1, 42.2]) {
+				let record = this.state.wedstrijden.filter((x) => { return x.isRecord && x.distance === distance; })[0];
+				temp.push(<Matches_Row date={record.date} name={record.name} distance={record.distance}
+					time={record.time} key={distance} />);
+			}
+			var wedstrijden = temp;
+		}
+		else if (this.state.filtered === null) {
+			var wedstrijden = null;
+		}
+		else {
+			var wedstrijden = this.state.wedstrijden.filter((x) => {
+				if (this.state.search) {
+					let regex = new RegExp(this.state.search, "i");
+					return regex.test(x.date) || regex.test(x.distance) || regex.test(x.time) || regex.test(x.name);
+				}
+				else if (this.state.filtered === "all") { return x; }
+				else if (this.state.filtered === "prs") { return x.isRecord; }
+				else if (this.state.filtered === 5 || this.state.filtered === 10 || this.state.filtered === 21.1) {
+					return x.distance === this.state.filtered;
+				}
+			}).map((data, index) => <Matches_Row date={data.date} name={data.name}
+				distance={data.distance} time={data.time} key={index} />);
+		}
+		return wedstrijden;
+	}
 }

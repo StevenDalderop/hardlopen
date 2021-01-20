@@ -4,7 +4,7 @@ import CSRFToken from '../components/csrftoken';
 const LoginForm = () => {
   return (
 	<div class="container">
-		<h1 class="center"> Login </h1>
+		<h1 class="text-center"> Login </h1>
 
 		<form id="login_form" action="/login" method="post">
 			< CSRFToken />

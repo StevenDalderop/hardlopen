@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Navbar from '../components/navbar';
 import Table from '../components/table'
+import { getFormattedTime, getMinutePerKm, getFormattedDateTime } from '../util'
 
 const baseUrl = window.location.protocol + "//" +window.location.host
 
@@ -73,7 +74,7 @@ function Lap(index, data) {
         return null
     } else {
         return (
-            <tr>
+            <tr key={index}>
 				<td scope="row">{index + 1}</td>
 				<td>{Math.floor(data.total_elapsed_time / 60)}:{Math.round(data.total_elapsed_time%60).padLeft()} </td>
 				<td>{Math.round(data.total_distance * 100) / 100} km </td>
@@ -81,39 +82,6 @@ function Lap(index, data) {
             </tr>            
         )
     }
-}
-
-Number.prototype.padLeft = function(base,chr){
-    var  len = (String(base || 10).length - String(this).length)+1;
-    return len > 0? new Array(len).join(chr || '0')+this : this;
-}
-
-function getMinutePerKm(km_per_hour) {
-	var minutes = 60 / km_per_hour
-	var minutes_rounded = Math.floor(60 / km_per_hour)
-	var seconds = Math.floor((minutes % 1) * 60) 
-	return minutes_rounded + ":" + seconds.padLeft()
-}	
-
-function getFormattedDate(date) {
-  var year = date.getFullYear();
-
-  var month = (1 + date.getMonth()).toString();
-  month = month.length > 1 ? month : '0' + month;
-
-  var day = date.getDate().toString();
-  day = day.length > 1 ? day : '0' + day;
-  
-  var time = [date.getHours().padLeft(), date.getMinutes().padLeft(), date.getSeconds().padLeft()].join(':');
-  
-  return day + '/' + month + '/' + year + " " + time;
-}
-
-function getFormattedTime(seconds) {
-	var minutes = seconds / 60 
-	var minutes_rounded = Math.floor(minutes)
-	var seconds_remainder = Math.round(seconds % 60)
-	return minutes_rounded + ":" + seconds_remainder.padLeft()
 }
 
 function Session_data(props) {
@@ -124,7 +92,7 @@ function Session_data(props) {
 
         return (
 			<div>
-				<span><b>Date:</b> {days[new Date(Date.parse(props.timestamp)).getDay()]} {getFormattedDate(new Date(Date.parse(props.timestamp)))} </span> <br></br>
+				<span><b>Date:</b> {days[new Date(Date.parse(props.timestamp)).getDay()]} {getFormattedDateTime(new Date(Date.parse(props.timestamp)))} </span> <br></br>
 				<span><b>Time:</b> {getFormattedTime(props.total_elapsed_time)}</span> <br></br>
 				<span><b>Distance:</b> {Math.round(props.total_distance * 100) / 100} km</span> <br></br>
 				<span><b>Average speed:</b> {getMinutePerKm(props.avg_speed) + " min/km"}</span> <br></br>

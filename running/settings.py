@@ -186,4 +186,7 @@ django_heroku.settings(locals())
 LOGIN_URL = 'login'
 
 if os.environ.get('DJANGO_DEVELOPMENT'):
-    from running.settings_dev import * 
+    SECURE_SSL_REDIRECT = False
+    SESSION_COOKIE_SECURE = False
+    CSRF_COOKIE_SECURE = False
+    print(SECURE_SSL_REDIRECT)

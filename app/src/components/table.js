@@ -12,7 +12,7 @@ const Table = ({colnames, rows, theme}) => {
 		<table className={table_class}>
 			<thead className={thead_class}>		
 				<tr>
-				    { colnames.map((name) => <th scope="col">{name}</th>) }
+				    { colnames.map((name, index) => <th scope="col" key={index.toString()}> {name} </th>)}
 				</tr>
 			</thead>
 			<tbody>

@@ -10,6 +10,7 @@ import Index from "./index";
 import Schedule from "./schedule";
 import Competitions from "./competitions";
 import Session from "./session";
+import Trainingen from "./trainingen"
 
 export default class Homepage extends React.Component {
 	constructor(props) {
@@ -26,6 +27,9 @@ export default class Homepage extends React.Component {
 				  <Route path="/schema">
                     < Schedule />
                   </Route>
+				  <Route path="/trainingen">
+					  <Trainingen />
+				  </Route>
 				  <Route path="/wedstrijden">
 					< Competitions />
 				  </Route>

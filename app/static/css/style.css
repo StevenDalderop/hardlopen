@@ -49,7 +49,15 @@
 }
 
 #svg_year, #svg_month {
-	max-height: 400px;
+	height: 400px;
+	width: 400px;
+}
+
+.loader {
+	height: 400px;
+	width: 400px;
+	margin: auto;
+	margin-bottom: 15px;
 }
 
 #login_form, #register_form {
@@ -90,7 +98,7 @@ th {
 	border-bottom: initial;
 }
 
-.center {
+.text-center {
 	text-align: center;
 }
 
@@ -111,6 +119,15 @@ th {
 @media (max-width: 450px) {
 	table {
 		font-size: 12px;
+	}
+
+	#svg_year, #svg_month, .loader {
+		width: 100%;
+		height: initial;
+	}
+
+	.loader {
+		padding-top: 100%;
 	}
 }
 
@@ -196,4 +213,3 @@ th {
 	flex-wrap: wrap;
 	justify-content: center;
 }
-	
