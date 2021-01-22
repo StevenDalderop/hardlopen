@@ -38,13 +38,21 @@ class SessionLapView(generics.ListAPIView):
     def get_queryset(self):
         return Lap.objects.filter(session_index=self.kwargs['id'])
 
-class SessionRecordView(generics.ListAPIView):
+class getSessionRecords(generics.ListAPIView):
     serializer_class = RecordSerializer
     permission_classes = [permissions.IsAuthenticated]
     paginator = None
-    
-    def get_queryset(self):
-        return Record.objects.filter(session_index=self.kwargs['id']).order_by('-timestamp')
+    url_kwarg = 'id'
+
+    def get(self, request, format=None, *arg, **kwargs):
+        session_index = kwargs.get(self.url_kwarg)
+        if session_index != None:
+            session_records = Record.objects.filter(session_index=session_index).order_by('timestamp')
+            if len(session_records) > 0:
+                data = RecordSerializer(session_records, many=True, context={'request': request}).data
+                return Response(data, status=status.HTTP_200_OK)
+            return Response({'Session Not Found': 'Invalid Session Index.'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'Bad Request': 'Session index paramater not found in request'}, status=status.HTTP_400_BAD_REQUEST)
 
 class TrainingView(APIView):
     permission_classes = [permissions.IsAuthenticated]

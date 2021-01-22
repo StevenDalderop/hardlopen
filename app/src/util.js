@@ -60,3 +60,21 @@ export function getFormattedSpeed(km, formatted_time) {
 	var seconds_per_km = total_seconds / km
 	return Math.floor(seconds_per_km  / 60) + ":" + Math.round(seconds_per_km % 60).padLeft()
 }	
+
+export const makeCancelable = (promise) => {
+	let hasCanceled_ = false;
+  
+	const wrappedPromise = new Promise((resolve, reject) => {
+	  promise.then(
+		val => hasCanceled_ ? reject({isCanceled: true}) : resolve(val),
+		error => hasCanceled_ ? reject({isCanceled: true}) : reject(error)
+	  );
+	});
+  
+	return {
+	  promise: wrappedPromise,
+	  cancel() {
+		hasCanceled_ = true;
+	  },
+	};
+  };

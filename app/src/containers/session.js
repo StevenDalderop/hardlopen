@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Navbar from '../components/navbar';
 import Table from '../components/table'
-import { getFormattedTime, getMinutePerKm, getFormattedDateTime } from '../util'
+import { getFormattedTime, getMinutePerKm, getFormattedDateTime, makeCancelable } from '../util'
 
 const baseUrl = window.location.protocol + "//" +window.location.host
 
@@ -13,7 +13,7 @@ function create_svg(data, column, select_id) {
 		var data2 = data.map(z => {return {"x": new Date(Date.parse(z.timestamp)), "y": z.heart_rate}})
 	}
 	
-	var margin = ({top: 20, right: 30, bottom: 30, left: 40})
+	var margin = ({top: 20, right: 25, bottom: 40, left: 50})
 	
 	var width = 400
 	
@@ -50,6 +50,27 @@ function create_svg(data, column, select_id) {
 		
 	let svg = d3.select(select_id)
 		.attr("viewBox", [0, 0, width, height]);
+
+	var figureName = column === "speed" ? "Speed" : "Heart rate" 
+	var yAxisName = figureName === "Speed" ? "km/h" : "bpm"
+
+	svg.append("text")
+		.attr("class", "x label")
+		.attr("text-anchor", "end")
+		.attr("x", width)
+		.attr("y", height - 6)
+		.text("Time")
+		.style("fill", "currentcolor")
+
+	svg.append("text")
+		.attr("class", "y label")
+		.attr("text-anchor", "end")
+		.attr("x", 0)
+		.attr("y", 0)
+		.attr("dy", ".75em")
+		.attr("transform", "rotate(-90)")
+		.text(yAxisName)
+		.style("fill", "currentcolor")
 	
 	svg.append("path")
 		.attr("fill", "none")
@@ -67,7 +88,6 @@ function create_svg(data, column, select_id) {
 		.call(yAxis)
 		.selectAll("text").style("fill", "currentcolor")	
 }
-
 
 function Lap(index, data) {
     if (data== null) { 
@@ -114,6 +134,9 @@ export default class Session extends React.Component {
 			"theme": "light",
         }
 		this.session_id = this.props.match.params.session_id
+		this.getSessionData = this.getSessionData() 
+		this.getLapData = makeCancelable(fetch(`${baseUrl}/api/sessions/${this.session_id}/laps`))
+		this.getRecordData = makeCancelable(fetch(`${baseUrl}/api/sessions/${this.session_id}/records`))
     }
 	
 	handleChangeNav(e) {
@@ -130,6 +153,23 @@ export default class Session extends React.Component {
 		}
 	}
 
+	getSessionData() {
+		var cancelableRequest =  makeCancelable(fetch(`${baseUrl}/api/sessions/${this.session_id}`))
+		cancelableRequest.promise.then(response => {
+				if (!response.ok) {
+					this.props.history.push("/");
+					throw new Error('Session does not exist');
+				} else {
+					return response.json()
+				}
+			})			
+			.then(data => {
+				this.setState({"data_session": data});
+			})
+			.catch(err => console.log(err))
+		return cancelableRequest
+	}
+
     componentDidMount() {
 		if (!localStorage.getItem('theme')) {
 			localStorage.setItem('theme', "light");
@@ -142,29 +182,19 @@ export default class Session extends React.Component {
 		}
 		this.setState({"theme": theme})
 		
-        fetch(`${baseUrl}/api/sessions/${this.session_id}/laps`)
-            .then(response => response.json())
+		
+		this.getLapData.promise
+			.then(response => response.json())
 			.then(data => {
                 this.setState({"data_laps": data.results});
             })
-			.catch(err => console.log(err))
-			
-
-			
-		fetch(`${baseUrl}/api/sessions/${this.session_id}`)
-            .then(response => response.json())
-			.then(data => {
-                this.setState({"data_session": data});
-            })
-			.catch(err => console.log(err))
-		
-		
-		fetch(`${baseUrl}/api/sessions/${this.session_id}/records`)
+			.catch((reason) => console.log('isCanceled', reason.isCanceled));
+					
+		this.getRecordData.promise
             .then(response => response.json())
 			.then(data => {
                 this.setState({"data_records": data})
 			
-				
 				// create a red polyline from an array of LatLng points
 				var latlngs = this.state.data_records.map((x) => [x["position_lat"], x["position_long"]])
 				var latlngs_filtered = latlngs.filter(x => x[0] !== null)
@@ -187,8 +217,13 @@ export default class Session extends React.Component {
 				create_svg(data, "speed", "#svg1")
 				create_svg(data, "heart_rate", "#svg2")								
             })
-			.catch(err => console.log(err))
-    }	
+			.catch((error) => console.log(error));
+	}	
+	
+	componentWillUnmount() {
+		this.getLapData.cancel()
+		this.getRecordData.cancel()
+	}
 
     render() {
         if (this.state.data_laps) {

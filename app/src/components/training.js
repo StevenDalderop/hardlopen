@@ -38,18 +38,19 @@ function handleTrainingSubmitted(e, index, completed) {
   
   
 const Training = (props) => {
-	var className = "training_div"
+	var className = "col-lg-3 col-sm-12 col-11 training_div"
 	if (props.completed) className += " bg-primary"
 	else className += " bg-secondary"
-	var btnClassName = props.theme === "dark" ? "btn btn-dark ms-5" : "btn btn-light ms-5"
+	if (props.training_nr % 3 !== 1) className += " offset-lg-1 offset-md-0"
+	var btnClassName = props.theme === "dark" ? "btn btn-dark" : "btn btn-light"
 
 	return (
 		<div className={className}>
 			<div className="training-title"> 
-				<h5 className="mr-5"> Training { props.training_nr }</h5>
+				<h5> Training { props.training_nr }</h5>
 				<div>
 					<form onSubmit={(e) => handleTrainingSubmitted(e, props.index, props.completed)}> 
-						<button style={{"width": "82.66px"}} onClick={() => props.handleChangeTraining(props.index)} 
+						<button onClick={() => props.handleChangeTraining(props.index)} 
 						className={btnClassName}> { props.completed ? "Remove" : "Add"}</button>
 					</form>
 				</div>

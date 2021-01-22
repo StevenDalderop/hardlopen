@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getFormattedDate } from '../util';
+import { getFormattedDate, makeCancelable } from '../util';
 
 const baseUrl = window.location.protocol + "//" + window.location.host
 
@@ -12,12 +12,17 @@ const Navbar = (props) => {
 	["/schema", "Schema"]]
 
 	useEffect(() => {
-        fetch(`${baseUrl}/api/sessions/`)
-            .then(res=> res.json())
+		var cancelableRequest = makeCancelable(fetch(`${baseUrl}/api/sessions/`))
+		cancelableRequest.promise
+            .then(res => res.json())
             .then(data => {
 				setSessionData(data.results)
 				setIsLoading(false)
-        })
+			})
+			.catch(error => console.log("isCancelled", error.isCancelled))
+		return function cleanup() {
+			cancelableRequest.cancel()
+		}
     },[]);
 	
 	function link(href, name, current_page, index) {

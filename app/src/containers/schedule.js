@@ -72,9 +72,9 @@ export default class Schedule extends React.Component {
 	renderWeekTraining(week, trainings_week) {
 		var trainings = sortByKey(trainings_week, "training_nr").map((t, training_nr) => this.renderTraining(t, training_nr + 1))	
 		return (
-			<div key={week} className="training-week">
+			<div className="container" key={week}>
 				<h3> Week {week} </h3>
-				<div className="div-training-week">
+				<div className="row justify-content-center">
 					{ trainings }
 				</div>
 			</div>
@@ -112,9 +112,9 @@ export default class Schedule extends React.Component {
 							role="progressbar" aria-valuenow={bar_width} aria-valuemin="0" 
 							aria-valuemax="100">{Math.round(bar_width) + "%"}</div>
 						</div>
-						<div id="trainings">
-						  { trainings } 
-						</div>
+					</div>
+					<div className="mt-3">
+						{ trainings } 
 					</div>
 				</div>
 			</div>
