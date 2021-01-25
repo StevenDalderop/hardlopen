@@ -34,7 +34,7 @@ else:
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv("debug", False)
+DEBUG = os.getenv("debug", False) == "True"
 
 DEBUG_PROPAGATE_EXCEPTIONS = True
 
@@ -50,8 +50,6 @@ INSTALLED_APPS = [
     'app',
     'api',
     'rest_framework',
-    'webpack_loader',
-    'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -63,7 +61,6 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -89,13 +86,6 @@ TEMPLATES = [
         },
     },
 ]
-
-WEBPACK_LOADER = {
-    'DEFAULT': {
-        'BUNDLE_DIR_NAME': 'dist/',
-        'STATS_FILE': os.path.join(BASE_DIR, 'webpack-stats.json'),
-    }
-}
 
 WSGI_APPLICATION = 'running.wsgi.application'
 
@@ -164,22 +154,6 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 50
 }
 
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-        },
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['console'],
-             'level': os.getenv('DJANGO_LOG_LEVEL', 'DEBUG'),
-        },
-    },
-}
-
 # Activate Django-Heroku.
 django_heroku.settings(locals())
 
@@ -189,4 +163,3 @@ if os.environ.get('DJANGO_DEVELOPMENT'):
     SECURE_SSL_REDIRECT = False
     SESSION_COOKIE_SECURE = False
     CSRF_COOKIE_SECURE = False
-    print(SECURE_SSL_REDIRECT)
