@@ -241,7 +241,7 @@ export default class Session extends React.Component {
 					<div className="grid-container">
 						<div> 
 							<h1> Speed </h1>
-							<svg id="svg1"> </svg>
+							{ this.state.data_records ? <svg id="svg1"> </svg> : <div className={"loader bg-" + this.state.theme}> </div>}
 						</div>
 						<div id="lap_container">
 							<h1> Laps </h1>
@@ -251,14 +251,13 @@ export default class Session extends React.Component {
 						</div>
 						<div> 
 							<h1> Heart rate </h1>
-							<svg id="svg2"> </svg>	
+							{ this.state.data_records ? <svg id="svg2"> </svg> : <div className={"loader bg-" + this.state.theme}> </div>}	
 						</div>
 						<div id="session_container"> 
 							<h1> Session </h1>
 							{session_data}
 						</div>
-						<div id="mapid"> 
-						</div>
+						{ this.state.data_records ? <div id="mapid"> </div> : <div id="mapid" className={"loader bg-" + this.state.theme}> </div>}						
 					</div> 
 				</div>
 			</div>

@@ -14,7 +14,7 @@ function Session_row(props) {
 		var formatted_speed = props.settings === "min/km" ? getMinutePerKm(props.data.avg_speed) + " min/km" : Math.round(props.data.avg_speed * 100) / 100 + " km/h"
         return (
             <tr>
-				<td><a href={"session/" + props.index}>{getFormattedDateTime(props.data.timestamp)}</a></td>
+				<td><a href={"session/" + props.data.index}>{getFormattedDateTime(props.data.timestamp)}</a></td>
 				<td>{getFormattedTime(props.data.total_elapsed_time)}</td>
 				<td>{getFormattedDistance(props.data.total_distance) + " km"}</td>
 				<td>{formatted_speed}</td>
