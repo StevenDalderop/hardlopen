@@ -1,5 +1,2 @@
+*.pyc 
 /node_modules 
-/static/app
-webpack-stats.json
-/staticfiles
-*.pyc

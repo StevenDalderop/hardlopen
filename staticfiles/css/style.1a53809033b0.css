@@ -1,0 +1,175 @@
+.grid-container {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	grid-template-rows: auto auto auto;
+	grid-column-gap: 15px;
+	grid-row-gap: 15px;
+	padding: 15px;
+	padding-top: 0px;
+	width: 100%;
+	grid-template-areas: 
+		"map session"
+		"svg1 lap"
+		"svg2 svg2";
+}
+
+#content {
+	padding-top: 75px;
+	min-height: 100vh;
+}
+
+#lap_container {
+	grid-area: lap;
+}
+
+#mapid {
+	height: 400px;
+	grid-area: map;
+	width: 100%;
+}
+
+#session_container {
+	grid-area: session;
+}
+
+#svg1 {
+	grid-area: svg1;
+	max-height: 400px;
+}
+
+#svg2 {
+	grid-area: svg2;
+	max-height: 400px;
+}
+
+#svg_year, #svg_month {
+	height: 400px;
+	width: 400px;
+}
+
+.loader {
+	height: 400px;
+	width: 400px;
+	margin: auto;
+	margin-bottom: 15px;
+}
+
+#login_form, #register_form {
+	display: flex;
+    flex-direction: column;
+    max-width: 250px;
+    justify-content: center;
+    justify-items: center;
+    margin: auto;
+}
+
+.table_container {
+	height: 400px;
+	overflow: auto;
+}
+
+th {
+	position: sticky;
+	top: 0px;
+}
+
+#navbar {
+	position: fixed;
+    width: 100%;
+    top: 0px;
+    z-index: 10000;
+}
+
+#bootstrap-overrides .table th {
+	border-top: initial;
+	border-bottom: initial;
+}
+
+.text-center {
+	text-align: center;
+}
+
+#lap_table_container {
+	overflow: auto;
+	height: 100%;
+	max-height: 400px;
+}
+
+@media (max-width: 800px) {
+	.grid-container {
+		grid-template-columns: 1fr;
+		grid-template-rows: repeat(5, auto);
+		grid-template-areas: "map" "session" "lap" "svg1" "svg2";
+	}
+}
+
+@media (max-width: 450px) {
+	table {
+		font-size: 12px;
+	}
+
+	#svg_year, #svg_month, .loader {
+		width: 100%;
+		height: initial;
+	}
+
+	.loader {
+		padding-top: 100%;
+	}
+}
+
+#buttons-group {
+	display: flex;
+	justify-content: center;
+	justify-items: center;
+	margin-bottom: 15px;
+}
+
+.training-title {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+}
+
+.dark {
+	background-color: rgb(50,50,50);
+	color: white;
+}
+
+.light {
+	background-color: white;
+	color: black;
+}
+
+.center {
+	align: center;
+}
+
+.training_div {
+	margin-bottom: 10px;
+	border-radius: 10px;
+	padding-top: 10px;
+}
+
+.text-left {
+	text-align: left;
+}
+
+.center-vertical {
+	display: flex;
+	align-items: center;
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	left: 0px;
+	top: 0px;
+	z-index: -10;
+}
+
+#login {
+	margin: auto;
+    max-width: 300px;
+    width: 100%;
+    padding: 30px;
+    border-radius: 15px;
+}
